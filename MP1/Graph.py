@@ -1,10 +1,22 @@
+
+
 class Graph(object):
+    """A Graph represent a maze.
+
+    Attributes:
+        start_position: A tuple of (row_index, col_index)
+        goals: A list of tuples for all the goals in the maze
+
+    Example usage:
+        graph = Graph(path_to_file)
+        path_to_goal = bfs(graph, graph.start_position, graph.goals[0])
+    """
+
     def __init__(self, file_name):
         self.matrix = []
         self.start_position = None
         self.goals = []
         self.__parse_file(file_name)
-        pass
 
     def get_neighbors(self, coords):
         """
