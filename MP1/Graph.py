@@ -1,8 +1,3 @@
-def get_surrounding_coords(coords):
-    row = coords[0]
-    col = coords[1]
-    return [(row, col + 1), (row, col - 1), (row + 1, col), (row - 1, col)]
-
 class Graph(object):
     def __init__(self, file_name):
         self.matrix = []
@@ -15,7 +10,7 @@ class Graph(object):
         """
         :type node: Node
         """
-        coords_lst = get_surrounding_coords(coords)
+        coords_lst = Graph.__get_surrounding_coords(coords)
         neighbors = []
         for coords in coords_lst:
             if self.is_in_maze(coords) and not self.is_wall(coords):
@@ -71,4 +66,10 @@ class Graph(object):
                 return
             self.goals.append((line_idx, start_idx))
             start_idx += 1
+
+    @staticmethod
+    def __get_surrounding_coords(coords):
+        row = coords[0]
+        col = coords[1]
+        return [(row, col + 1), (row, col - 1), (row + 1, col), (row - 1, col)]
 
