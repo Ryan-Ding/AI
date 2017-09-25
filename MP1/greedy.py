@@ -1,3 +1,5 @@
+from math import log
+
 from MP1.Graph import *
 import heapq
 
@@ -22,9 +24,12 @@ def greedy(graph):
             graph.came_from[neighbor] = coords
             heapq.heappush(frontier, (h(neighbor), neighbor))
 
+
 for maze in SINGLE_DOT_MAZES:
     graph = Graph(maze)
     greedy(graph)
     graph.print_solution()
-    with open(maze[:-4] +"_solution_greedy.txt", "w") as f:
-        f.write(graph.get_maze_str())
+    # with open(maze[:-4] +"_solution_greedy.txt", "w") as f:
+    #     f.write(graph.get_maze_str())
+
+

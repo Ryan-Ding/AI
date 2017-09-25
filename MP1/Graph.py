@@ -1,6 +1,35 @@
-
 SINGLE_DOT_MAZES = ["mediumMaze.txt", "bigMaze.txt", "openMaze.txt"]
 MULTI_DOT_MAZES = ["tinySearch.txt", "smallSearch.txt", "mediumSearch.txt"]
+
+class Node(object):
+    def __init__(self, coords):
+        self.row = coords[0]
+        self.col = coords[1]
+        self.coords = coords
+        self.parent = None
+
+    def __lt__(self, other):
+        return self.coords < other.coords
+
+    def __str__(self):
+        if self.parent!=None:
+            return '%s -> %s'%(self.parent.coords, self.coords)
+        else:
+            return "None -> (%s, %s)"%(self.row, self.col)
+
+    def __repr__(self):
+        return self.__str__()
+
+    def get_solution(self):
+        reversed_path = []
+        node = self
+        while(node.parent!=None):
+            reversed_path.append(node.coords)
+            node = node.parent
+        reversed_path.reverse()
+        return reversed_path
+
+
 
 class Graph(object):
     """A Graph represent a maze.
@@ -20,10 +49,12 @@ class Graph(object):
         self.visited = set()
         self.start_position = None
         self.goals = []
-        self.came_from = {}     # For each node, which node it can most efficiently be reached from.
-        self.steps_taken = 0    # Will only be updated if mark_solution() is called
+        self.goals_left = set()  # Will be the same as self.goals at the beginning; every time a goal is reached
+        self.__goals_reached = []
+        self.came_from = {}  # For each node, which node it can most efficiently be reached from.
+        self.steps_taken = 0  # Will only be updated if mark_solution() is called
         self.__parse_file(file_name)
-        self.__maze_solved = False   # whether the matrix has been modified to print solution
+        self.__maze_solved = False  # whether the matrix has been modified to print solution
 
     def get_neighbors(self, coords):
         """
@@ -53,7 +84,6 @@ class Graph(object):
     def mark_visited(self, coords):
         self.visited.add(coords)
 
-
     # The following functions can only be called if is_in_maze(coords) returns True.
     def get_coords(self, coords):
         """
@@ -71,6 +101,17 @@ class Graph(object):
     def is_goal(self, coords):
         return self.get_coords(coords) == '.'
 
+    def reach_goal(self, coords):
+        if coords in self.goals_left:
+            self.goals_left.remove(coords)
+            self.__goals_reached.append(coords)
+            print("reached a goal! %d goals left: %s"%(len(self.goals_left), self.goals_left))
+        else:
+            if self.is_goal(coords):
+                print("goal %s has already been reached before")
+            else:
+                print("%s is not a goal!" % coords)
+
     # The following functions are used to get/print solution after a maze is solved
     def print_solution(self):
         if not self.__maze_solved:
@@ -79,7 +120,7 @@ class Graph(object):
         self.print_maze()
 
     def get_maze_str(self):
-        maze_str = "%d nodes expanded | %d steps taken \n"%(len(self.visited), self.steps_taken)
+        maze_str = ""
         for row in self.matrix:
             maze_str += "".join(row)
             maze_str += '\n'
@@ -87,13 +128,18 @@ class Graph(object):
 
     def mark_solution(self):
         self.__maze_solved = True
-        for goal in self.goals:
-            pos_in_path = self.came_from[goal]
-            while pos_in_path!=self.start_position:
-                self.steps_taken += 1
-                self.__set_coords(pos_in_path, ".")
-                pos_in_path = self.came_from[pos_in_path]
-        self.__set_coords(self.start_position, "P")
+        if len(self.goals) > 1:
+            for i in range(len(self.__goals_reached)):
+                self.__set_coords(self.__goals_reached[i], Graph.__get_marker_for_goal(i))
+            return
+        else:
+            for goal in self.goals:
+                pos_in_path = self.came_from[goal]
+                while pos_in_path != self.start_position:
+                    self.steps_taken += 1
+                    self.__set_coords(pos_in_path, ".")
+                    pos_in_path = self.came_from[pos_in_path]
+            self.__set_coords(self.start_position, "P")
 
     def print_maze(self):
         print(self.get_maze_str())
@@ -111,6 +157,7 @@ class Graph(object):
                     self.start_position = (i, index)
             self.__find_all_goals_in_line(i, line)
             self.matrix[i] = list(self.matrix[i])
+        self.goals_left = set(self.goals)
 
     def __find_all_goals_in_line(self, line_idx, line):
         start_idx = 0
@@ -130,3 +177,11 @@ class Graph(object):
         col = coords[1]
         return [(row, col + 1), (row, col - 1), (row + 1, col), (row - 1, col)]
 
+    @staticmethod
+    def __get_marker_for_goal(goal_rank):
+        if goal_rank < 10:
+            return str(goal_rank)
+        elif goal_rank - 10 < 26:
+            return chr(ord("a") + (goal_rank - 10))
+        else:
+            return chr(ord("A") + (goal_rank - 36))
