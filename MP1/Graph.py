@@ -1,6 +1,20 @@
 SINGLE_DOT_MAZES = ["mediumMaze.txt", "bigMaze.txt", "openMaze.txt"]
 MULTI_DOT_MAZES = ["tinySearch.txt", "smallSearch.txt", "mediumSearch.txt"]
 
+"""
+search function's responsibility:
+ - count nodes expanded
+ - update graph.visited and reset graph.visited when a goal is reached(not needed for single dot search)
+ - mark a goal as reached by calling graph.reach_goal(goal_coords)
+ - whenever a goal is reached, check if graph.goals_left is empty; if so, maze has been solved
+ - set node.parent every time a node is added to frontier
+ - return last node (the node whose coords is the position of the last goal reached)
+Node's responsibility:
+ - keep track of parent node
+Graph's responsibility:
+ - keep track of which positions we have visited since last goal is reached
+ - mark path on maze for both multidots and singledot maze (user needs to call print_solution(path))
+"""
 class Node(object):
     def __init__(self, coords):
         self.row = coords[0]

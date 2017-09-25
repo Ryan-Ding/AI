@@ -6,8 +6,7 @@ from MP1.Graph import Graph, SINGLE_DOT_MAZES, MULTI_DOT_MAZES, Node
 def find_path(graph):
     node_count = 1
     processing_queue = Queue()
-    start_pos = graph.start_position
-    processing_queue.put(Node(start_pos))
+    processing_queue.put(Node(graph.start_position))
     while not processing_queue.empty():
         current_node = processing_queue.get()
         graph.mark_visited(current_node.coords)
