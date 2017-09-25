@@ -37,7 +37,6 @@ def pos_lowest_f_score():
         if f_score_from_this_position < lowest_f:
             lowest_f = f_score_from_this_position
             pos_lowest_f = pos
-
     return pos_lowest_f
 
 def heuristic_estimate(pos, goals):
@@ -53,7 +52,7 @@ def print_path():
         path_set.add(pos_on_path)
         pos_on_path = came_from[pos_on_path]
 
-    with open("openMaze_solution_astar.txt", "w") as fout:
+    with open("mediumMaze_solution_astar.txt", "w") as fout:
         for i in range(len(graph.matrix)):
             for j in range(len(graph.matrix[i])):
                 pos = (i, j)
@@ -67,7 +66,7 @@ def print_path():
                     fout.write("%")
             fout.write("\n")
 
-graph = Graph("openMaze.txt")
+graph = Graph("mediumMaze.txt")
 current_pos = ()
 
 closed_set = set()
