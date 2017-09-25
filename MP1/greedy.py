@@ -1,4 +1,4 @@
-from MP1.Graph import Graph
+from MP1.Graph import *
 import heapq
 
 def mahattan_distance(origin, destination):
@@ -13,7 +13,6 @@ def greedy(graph):
     heapq.heappush(frontier, (h(graph.start_position), graph.start_position))
     while len(frontier)>0:
         distance, coords = heapq.heappop(frontier)
-        print("distance: %d, coords: %s"%(distance, coords))
         graph.mark_visited(coords)
         if graph.is_goal(coords):
             return
@@ -23,6 +22,9 @@ def greedy(graph):
             graph.came_from[neighbor] = coords
             heapq.heappush(frontier, (h(neighbor), neighbor))
 
-graph = Graph("mediumMaze.txt")
-greedy(graph)
-graph.print_solution()
+for maze in SINGLE_DOT_MAZES:
+    graph = Graph(maze)
+    greedy(graph)
+    graph.print_solution()
+    with open(maze[:-4] +"_solution_greedy.txt", "w") as f:
+        f.write(graph.get_maze_str())

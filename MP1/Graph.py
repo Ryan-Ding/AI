@@ -1,5 +1,6 @@
 
-ALL_MAZE = ["mediumMaze.txt", "open"]
+SINGLE_DOT_MAZES = ["mediumMaze.txt", "bigMaze.txt", "openMaze.txt"]
+MULTI_DOT_MAZES = ["tinySearch.txt", "smallSearch.txt", "mediumSearch.txt"]
 
 class Graph(object):
     """A Graph represent a maze.
@@ -74,11 +75,11 @@ class Graph(object):
     def print_solution(self):
         if not self.__maze_solved:
             self.mark_solution()
-        print("\nSolution:  %d nodes expanded | %d steps taken"%(len(self.visited), self.steps_taken))
+        print("\nSolution:")
         self.print_maze()
 
     def get_maze_str(self):
-        maze_str = ""
+        maze_str = "%d nodes expanded | %d steps taken \n"%(len(self.visited), self.steps_taken)
         for row in self.matrix:
             maze_str += "".join(row)
             maze_str += '\n'
