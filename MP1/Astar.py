@@ -42,13 +42,13 @@ def pos_lowest_f_score():
 def heuristic_estimate(pos, goals):
     horizontal = abs(pos[0] - goals[0][0])
     vertical = abs(pos[1] - goals[0][1])
-    return horizontal + vertical
+    return horizontal + vertical　　　# using manhattan distance
 
 def print_path():
-    path_set = set()
-    pos_on_path = current_pos
+    path_set = set()　　　　# The set of all nodes on the solution path
+    pos_on_path = current_pos       # Initially the goal position
 
-    while pos_on_path in came_from:
+    while pos_on_path in came_from:       # Go back from goal to start position to retrive the nodes on path
         path_set.add(pos_on_path)
         pos_on_path = came_from[pos_on_path]
 
@@ -69,12 +69,12 @@ def print_path():
 graph = Graph("mediumMaze.txt")
 current_pos = ()
 
-closed_set = set()
-open_set = set()
-came_from = {}
+closed_set = set()　　# The set of nodes already evaluated.
+open_set = set()      # The set of currently discovered nodes that are not evaluated yet.
+came_from = {}      　# For each node, which node it can most efficiently be reached from.
 
-g_score = {}
-f_score = {}
+g_score = {}        # For each node, the cost of getting from the start node to that node.
+f_score = {}        # Through each node, the total cost of getting from the start node to the goal.
 
 for i in range(len(graph.matrix)):
     for j in range(len(graph.matrix[i])):
