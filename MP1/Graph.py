@@ -20,7 +20,7 @@ class Node(object):
     def __repr__(self):
         return self.__str__()
 
-    def get_solution(self):
+    def get_path(self):
         reversed_path = []
         node = self
         while(node.parent!=None):
@@ -37,11 +37,13 @@ class Graph(object):
     Attributes:
         start_position: A tuple of (row_index, col_index)
         goals: A list of tuples for all the goals in the maze
+        goals_left: A set of tuples for all the goals that have not been reached
         visited: A set of tuples for all visited location
 
     Example usage:
         graph = Graph(path_to_file)
-        path_to_goal = bfs(graph, graph.start_position, graph.goals[0])
+        last_node = bfs_multi_dots(graph)   # here
+        graph.print_solution(last_node.get_path())
     """
 
     def __init__(self, file_name):
@@ -50,9 +52,8 @@ class Graph(object):
         self.start_position = None
         self.goals = []
         self.goals_left = set()  # Will be the same as self.goals at the beginning; every time a goal is reached
-        self.__goals_reached = []
-        self.came_from = {}  # For each node, which node it can most efficiently be reached from.
         self.steps_taken = 0  # Will only be updated if mark_solution() is called
+        self.__goals_reached = []   # stores reached goals in the order it was reached
         self.__parse_file(file_name)
         self.__maze_solved = False  # whether the matrix has been modified to print solution
 
@@ -114,7 +115,7 @@ class Graph(object):
 
     # The following functions are used to get/print solution after a maze is solved
     def print_solution(self, path):
-        self.mark_solution(path)
+        self.__mark_solution(path)
         print("\nSolution: %d steps taken"%len(path))
         self.print_maze()
 
@@ -124,16 +125,6 @@ class Graph(object):
             maze_str += "".join(row)
             maze_str += '\n'
         return maze_str
-
-    def mark_solution(self, path):
-        self.__maze_solved = True
-        if len(self.goals) > 1:
-            for i in range(len(self.__goals_reached)):
-                self.__set_coords(self.__goals_reached[i], Graph.__get_marker_for_goal(i))
-            return
-        else:
-            for coords in path:
-                self.__set_coords(coords, ".")
 
     def print_maze(self):
         print(self.get_maze_str())
@@ -152,6 +143,16 @@ class Graph(object):
             self.__find_all_goals_in_line(i, line)
             self.matrix[i] = list(self.matrix[i])
         self.goals_left = set(self.goals)
+
+    def __mark_solution(self, path):
+        self.__maze_solved = True
+        if len(self.goals) > 1:
+            for i in range(len(self.__goals_reached)):
+                self.__set_coords(self.__goals_reached[i], Graph.__get_marker_for_goal(i))
+            return
+        else:
+            for coords in path:
+                self.__set_coords(coords, ".")
 
     def __find_all_goals_in_line(self, line_idx, line):
         start_idx = 0

@@ -38,6 +38,6 @@ def greedy(graph):
 for maze in SINGLE_DOT_MAZES:
     graph = Graph(maze)
     last_node = greedy(graph)
-    graph.print_solution(last_node.get_solution())
+    graph.print_solution(last_node.get_path())
     # with open(maze[:-4] +"_solution_greedy.txt", "w") as f:
     #     f.write(graph.get_maze_str())
