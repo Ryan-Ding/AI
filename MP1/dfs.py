@@ -8,7 +8,7 @@ def print_path(current_node):
         path_set.add(pos_on_path)
         pos_on_path = came_from[pos_on_path]
 
-    with open("mediumMaze_dfs_soln.txt", "w") as fout:
+    with open("bigMaze_dfs_soln.txt", "w") as fout:
         for i in range(len(graph.matrix)):
             for j in range(len(graph.matrix[i])):
                 pos = (i, j)
@@ -24,20 +24,20 @@ def print_path(current_node):
 
 def find_path(graph):
 	start_pos = graph.start_position
-	graph.mark_visited(start_pos)
-	stack.append(start_pos)
-	while stack:
+	graph.mark_visited(start_pos) #mark starting node as visited
+	stack.append(start_pos)    #add starting point to stack
+	while stack:   #iterative dfs
 		current_node = stack.pop()
-		if current_node in graph.goals:
+		if current_node in graph.goals:   #goal state found
 			print_path(current_node)
 			return
 		else:
-			current_neighbors = graph.get_neighbors(current_node)
-			for neighbor in current_neighbors:
-				if not graph.has_visited(neighbor):
+			current_neighbors = graph.get_neighbors(current_node)    #get neighbors
+			for neighbor in current_neighbors:   #iterate through neighbors
+				if not graph.has_visited(neighbor): #check if this node has been marked
 					graph.mark_visited(neighbor)
 					stack.append(neighbor)
-					came_from[neighbor]=current_node
+					came_from[neighbor]=current_node   #remember parent
 			graph.mark_visited(current_node)
 	return
 
@@ -46,7 +46,7 @@ def find_path(graph):
 
 
 
-graph = Graph("mediumMaze.txt")
-came_from = {}
+graph = Graph("bigMaze.txt") #start a graph class
+came_from = {}  #initiate empty set
 stack = list()
-find_path(graph)
+find_path(graph)    #find path
