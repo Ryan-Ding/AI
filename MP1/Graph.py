@@ -38,11 +38,12 @@ class Graph(object):
         start_position: A tuple of (row_index, col_index)
         goals: A list of tuples for all the goals in the maze
         goals_left: A set of tuples for all the goals that have not been reached
-        visited: A set of tuples for all visited location
+        visited: A set of tuples for all visited location (QUESTION: need to empty this visited set everytime a goal is reached?)
+
 
     Example usage:
         graph = Graph(path_to_file)
-        last_node = bfs_multi_dots(graph)   # here
+        last_node = bfs_multi_dots(graph)
         graph.print_solution(last_node.get_path())
     """
 
@@ -52,7 +53,6 @@ class Graph(object):
         self.start_position = None
         self.goals = []
         self.goals_left = set()  # Will be the same as self.goals at the beginning; every time a goal is reached
-        self.steps_taken = 0  # Will only be updated if mark_solution() is called
         self.__goals_reached = []   # stores reached goals in the order it was reached
         self.__parse_file(file_name)
         self.__maze_solved = False  # whether the matrix has been modified to print solution
