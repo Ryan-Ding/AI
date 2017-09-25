@@ -6,6 +6,7 @@ class Graph(object):
     Attributes:
         start_position: A tuple of (row_index, col_index)
         goals: A list of tuples for all the goals in the maze
+        visited: A set of tuples for all visited location
 
     Example usage:
         graph = Graph(path_to_file)
@@ -14,6 +15,7 @@ class Graph(object):
 
     def __init__(self, file_name):
         self.matrix = []
+        self.visited = set()
         self.start_position = None
         self.goals = []
         self.__parse_file(file_name)
@@ -39,6 +41,13 @@ class Graph(object):
             return True
         except IndexError:
             return False
+
+    def has_visited(self, coords):
+        return coords in self.visited
+
+    def mark_visited(self, coords):
+        self.visited.add(coords)
+
 
     # The following functions can only be called if is_in_maze(coords) returns True.
     def get_coords(self, coords):
