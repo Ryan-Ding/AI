@@ -1,4 +1,5 @@
 
+ALL_MAZE = ["mediumMaze.txt", "open"]
 
 class Graph(object):
     """A Graph represent a maze.
@@ -18,7 +19,10 @@ class Graph(object):
         self.visited = set()
         self.start_position = None
         self.goals = []
+        self.came_from = {}     # For each node, which node it can most efficiently be reached from.
+        self.steps_taken = 0    # Will only be updated if mark_solution() is called
         self.__parse_file(file_name)
+        self.__maze_solved = False   # whether the matrix has been modified to print solution
 
     def get_neighbors(self, coords):
         """
@@ -66,6 +70,33 @@ class Graph(object):
     def is_goal(self, coords):
         return self.get_coords(coords) == '.'
 
+    # The following functions are used to get/print solution after a maze is solved
+    def print_solution(self):
+        if not self.__maze_solved:
+            self.mark_solution()
+        print("\nSolution:  %d nodes expanded | %d steps taken"%(len(self.visited), self.steps_taken))
+        self.print_maze()
+
+    def get_maze_str(self):
+        maze_str = ""
+        for row in self.matrix:
+            maze_str += "".join(row)
+            maze_str += '\n'
+        return maze_str
+
+    def mark_solution(self):
+        self.__maze_solved = True
+        for goal in self.goals:
+            pos_in_path = self.came_from[goal]
+            while pos_in_path!=self.start_position:
+                self.steps_taken += 1
+                self.__set_coords(pos_in_path, ".")
+                pos_in_path = self.came_from[pos_in_path]
+        self.__set_coords(self.start_position, "P")
+
+    def print_maze(self):
+        print(self.get_maze_str())
+
     # private functions
     def __parse_file(self, file_name):
         with open(file_name, 'r') as maze_file:
@@ -78,6 +109,7 @@ class Graph(object):
                 if index != -1:
                     self.start_position = (i, index)
             self.__find_all_goals_in_line(i, line)
+            self.matrix[i] = list(self.matrix[i])
 
     def __find_all_goals_in_line(self, line_idx, line):
         start_idx = 0
@@ -87,6 +119,9 @@ class Graph(object):
                 return
             self.goals.append((line_idx, start_idx))
             start_idx += 1
+
+    def __set_coords(self, coords, character):
+        self.matrix[coords[0]][coords[1]] = character
 
     @staticmethod
     def __get_surrounding_coords(coords):
