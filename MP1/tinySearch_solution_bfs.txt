@@ -1,4 +1,4 @@
-Solution: 36 steps taken | expanded 312255 nodes
+Solution: 36 steps taken | expanded 63824 nodes
 %%%%%%%%%%
 %7  % 4  %
 % %6% %% %
