@@ -5,8 +5,6 @@ MULTI_DOT_MAZES = ["tinySearch.txt", "smallSearch.txt", "mediumSearch.txt"]
 search function's responsibility:
  - count nodes expanded
  - update graph.visited and reset graph.visited when a goal is reached(not needed for single dot search)
- - mark a goal as reached by calling graph.reach_goal(goal_coords)
- - whenever a goal is reached, check if graph.goals_left is empty; if so, maze has been solved
  - set node.parent every time a node is added to frontier
  - return last node (the node whose coords is the position of the last goal reached)
 Node's responsibility:
@@ -21,6 +19,10 @@ class Node(object):
         self.col = coords[1]
         self.coords = coords
         self.parent = None
+        self.goals_left = set()
+        self.visited = set()
+        self.goals_reached = []
+        self.path_cost = 0
 
     def __lt__(self, other):
         return self.coords < other.coords
@@ -43,6 +45,13 @@ class Node(object):
         reversed_path.reverse()
         return reversed_path
 
+    def __eq__(self, other):
+        if other==None:
+            return False
+        return self.coords == other.coords and self.goals_left == other.goals_left
+
+    def __hash__(self):
+        return hash(str(self.coords) + str(sorted(self.goals_left)))
 
 
 class Graph(object):
@@ -128,8 +137,8 @@ class Graph(object):
                 print("%s is not a goal!" % coords)
 
     # The following functions are used to get/print solution after a maze is solved
-    def print_solution(self, path):
-        self.__mark_solution(path)
+    def print_solution(self, path, goals_reached):
+        self.__mark_solution(path, goals_reached)
         print("\nSolution: %d steps taken"%len(path))
         self.print_maze()
 
@@ -158,11 +167,11 @@ class Graph(object):
             self.matrix[i] = list(self.matrix[i])
         self.goals_left = set(self.goals)
 
-    def __mark_solution(self, path):
+    def __mark_solution(self, path, goals_reached):
         self.__maze_solved = True
         if len(self.goals) > 1:
-            for i in range(len(self.__goals_reached)):
-                self.__set_coords(self.__goals_reached[i], Graph.__get_marker_for_goal(i))
+            for i in range(len(goals_reached)):
+                self.__set_coords(goals_reached[i], Graph.__get_marker_for_goal(i))
             return
         else:
             for coords in path:
