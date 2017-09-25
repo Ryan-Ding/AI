@@ -113,10 +113,9 @@ class Graph(object):
                 print("%s is not a goal!" % coords)
 
     # The following functions are used to get/print solution after a maze is solved
-    def print_solution(self):
-        if not self.__maze_solved:
-            self.mark_solution()
-        print("\nSolution:")
+    def print_solution(self, path):
+        self.mark_solution(path)
+        print("\nSolution: %d steps taken"%len(path))
         self.print_maze()
 
     def get_maze_str(self):
@@ -126,20 +125,15 @@ class Graph(object):
             maze_str += '\n'
         return maze_str
 
-    def mark_solution(self):
+    def mark_solution(self, path):
         self.__maze_solved = True
         if len(self.goals) > 1:
             for i in range(len(self.__goals_reached)):
                 self.__set_coords(self.__goals_reached[i], Graph.__get_marker_for_goal(i))
             return
         else:
-            for goal in self.goals:
-                pos_in_path = self.came_from[goal]
-                while pos_in_path != self.start_position:
-                    self.steps_taken += 1
-                    self.__set_coords(pos_in_path, ".")
-                    pos_in_path = self.came_from[pos_in_path]
-            self.__set_coords(self.start_position, "P")
+            for coords in path:
+                self.__set_coords(coords, ".")
 
     def print_maze(self):
         print(self.get_maze_str())
