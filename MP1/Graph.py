@@ -4,34 +4,32 @@ MULTI_DOT_MAZES = ["tinySearch.txt", "smallSearch.txt", "mediumSearch.txt"]
 """
 search function's responsibility:
  - count nodes expanded
- - update graph.visited and reset graph.visited when a goal is reached(not needed for single dot search)
- - set node.parent every time a node is added to frontier
+ - set node.parent, node.goals_left,...., every time a node is added to frontier
  - return last node (the node whose coords is the position of the last goal reached)
 Node's responsibility:
  - keep track of parent node
 Graph's responsibility:
  - keep track of which positions we have visited since last goal is reached
- - mark path on maze for both multidots and singledot maze (user needs to call print_solution(path))
+ - mark path on maze for both multidots and singledot maze (given the path or goals_reached in order)
 """
+
 class Node(object):
     def __init__(self, coords):
-        self.row = coords[0]
-        self.col = coords[1]
         self.coords = coords
         self.parent = None
         self.goals_left = set()
-        self.visited = set()
-        self.goals_reached = []
-        self.path_cost = 0
+        self.goals_reached = []  # append in order
+        self.path_cost = 0  # "Every time you add a node to the frontier, check whether it already exists in the
+                            # frontier with a higher path cost, and if yes, replace that node with the new one"
 
     def __lt__(self, other):
         return self.coords < other.coords
 
     def __str__(self):
-        if self.parent!=None:
-            return '%s -> %s'%(self.parent.coords, self.coords)
+        if self.parent is not None:
+            return '%s -> %s' % (self.parent.coords, self.coords)
         else:
-            return "None -> (%s, %s)"%(self.row, self.col)
+            return "None -> (%s, %s)" % (self.row, self.col)
 
     def __repr__(self):
         return self.__str__()
@@ -39,14 +37,14 @@ class Node(object):
     def get_path(self):
         reversed_path = []
         node = self
-        while(node.parent!=None):
+        while node.parent is not None:
             reversed_path.append(node.coords)
             node = node.parent
         reversed_path.reverse()
         return reversed_path
 
     def __eq__(self, other):
-        if other==None:
+        if other is None:
             return False
         return self.coords == other.coords and self.goals_left == other.goals_left
 
@@ -76,7 +74,7 @@ class Graph(object):
         self.start_position = None
         self.goals = []
         self.goals_left = set()  # Will be the same as self.goals at the beginning; every time a goal is reached
-        self.__goals_reached = []   # stores reached goals in the order it was reached
+        self.__goals_reached = []  # stores reached goals in the order it was reached
         self.__parse_file(file_name)
         self.__maze_solved = False  # whether the matrix has been modified to print solution
 
@@ -129,7 +127,7 @@ class Graph(object):
         if coords in self.goals_left:
             self.goals_left.remove(coords)
             self.__goals_reached.append(coords)
-            print("reached a goal! %d goals left: %s"%(len(self.goals_left), self.goals_left))
+            print("reached a goal! %d goals left: %s" % (len(self.goals_left), self.goals_left))
         else:
             if self.is_goal(coords):
                 print("goal %s has already been reached before")
@@ -139,7 +137,7 @@ class Graph(object):
     # The following functions are used to get/print solution after a maze is solved
     def print_solution(self, path, goals_reached):
         self.__mark_solution(path, goals_reached)
-        print("\nSolution: %d steps taken"%len(path))
+        print("\nSolution: %d steps taken" % len(path))
         self.print_maze()
 
     def get_maze_str(self):
