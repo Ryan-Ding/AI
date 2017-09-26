@@ -72,6 +72,8 @@ def distance_to_all_goals(node):        # can find optimal solution, but doesn't
     return all_distance
 
 def MST(node):
+    global parent
+    global rank
     nodes_in_tree = set(node.goals_left)
     nodes_in_tree.add(node.coords)
     distances_btw_nodes = []
@@ -80,7 +82,11 @@ def MST(node):
     for distance, goal1, goal2 in distances_btw_goals:
         if goal1 in node.goals_left and goal2 in node.goals_left:
             heapq.heappush(distances_btw_nodes, (distance, goal1, goal2))
-    return kruskal(nodes_in_tree, distances_btw_nodes)
+    weights =  kruskal(nodes_in_tree, distances_btw_nodes)
+    parent = dict()
+    rank = dict()
+    return weights
+
 
 def num_of_goals_left(node):
     return len(node.goals_left)
@@ -144,7 +150,6 @@ for i in range(len(graph.goals)):
         goal1 = graph.goals[i]
         goal2 = graph.goals[j]
         distances_btw_goals.append((mahattan_distance(goal1, goal2), goal1, goal2))
-
 
 last_node = find_path(graph)
 if last_node is not None:
