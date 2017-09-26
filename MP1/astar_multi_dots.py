@@ -147,7 +147,7 @@ def push_to_frontier(node_to_push, frontier):
     node_to_push.f_score = evaluate(node_to_push)
     heapq.heappush(frontier, node_to_push)
 
-graph = Graph(MULTI_DOT_MAZES[1])
+graph = Graph(MULTI_DOT_MAZES[2])
 
 full_graph = False  # search shortest path between goals (subproblems)
 # store the distances between each goals for MST use
