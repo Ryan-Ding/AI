@@ -26,7 +26,23 @@ heuristic: min_distance
 
 
 Solution: 36 steps taken | expanded 307 nodes
-heuristic: total weights of MST
+heuristic: total weights of MST + using actual distance between each goals
+%%%%%%%%%%
+%7  % 4  %
+% %6% %% %
+% %   5%3%
+% 8%P%   %
+%9  0  1 %
+% %%%% % %
+%a b   %2%
+%%%%%%%%%%
+
+real	0m0.125s
+user	0m0.112s
+sys	    0m0.012s
+
+Solution: 36 steps taken | expanded 196 nodes
+heuristic: total weights of MST + using actual distance between each goals + using actual distance between current position to each goal
 %%%%%%%%%%
 %7  % 4  %
 % %6% %% %

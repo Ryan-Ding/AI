@@ -1,7 +1,7 @@
 import copy
 import heapq
 
-from MP1.Graph import *
+from Graph import *
 
 
 ################## MST #########################
@@ -40,6 +40,18 @@ def kruskal(nodes, edges):
             weights += weight
 
     return weights
+
+def shortest_distance(graph, point1, point2):
+    global full_graph
+    full_graph = False
+    graph_copy = copy.deepcopy(graph)
+    graph_copy.start_position = point1
+    graph_copy.goals = [point2]
+    graph_copy.goals_left = set([point2])
+    last_node = find_path(graph_copy)
+    distance = last_node.path_cost
+    full_graph = True
+    return distance
 ################## MST #########################
 
 """
@@ -75,11 +87,12 @@ def distance_to_all_goals(node):        # can find optimal solution, but doesn't
 def MST(node):
     global parent
     global rank
+    global graph
     nodes_in_tree = set(node.goals_left)
     nodes_in_tree.add(node.coords)
     distances_btw_nodes = []
     for goal in node.goals_left:
-        heapq.heappush(distances_btw_nodes, (mahattan_distance(node.coords, goal), node.coords, goal))
+        heapq.heappush(distances_btw_nodes, (shortest_distance(graph, node.coords, goal), node.coords, goal))
     for distance, goal1, goal2 in distances_btw_goals:
         if goal1 in node.goals_left and goal2 in node.goals_left:
             heapq.heappush(distances_btw_nodes, (distance, goal1, goal2))
@@ -116,7 +129,7 @@ def find_path(graph):
         explored_set.add(current_node)
         if current_node.coords in current_node.goals_left:
             current_node.goals_left.remove(current_node.coords)
-            print("reached a goal. %d nodes in frontier. goals left: "%len(frontier), current_node.goals_left)
+            # print("reached a goal. %d nodes in frontier. goals left: "%len(frontier), current_node.goals_left)
             current_node.goals_reached.append(current_node.coords)
             if len(current_node.goals_left) == 0:
                 print("expanded %d nodes" % node_count)
@@ -147,7 +160,7 @@ def push_to_frontier(node_to_push, frontier):
     node_to_push.f_score = evaluate(node_to_push)
     heapq.heappush(frontier, node_to_push)
 
-graph = Graph(MULTI_DOT_MAZES[2])
+graph = Graph(MULTI_DOT_MAZES[0])
 
 full_graph = False  # search shortest path between goals (subproblems)
 # store the distances between each goals for MST use
@@ -156,12 +169,7 @@ for i in range(len(graph.goals)):
     for j in range(i+1, len(graph.goals)):
         goal1 = graph.goals[i]
         goal2 = graph.goals[j]
-        graph_copy = copy.deepcopy(graph)
-        graph_copy.start_position = goal1
-        graph_copy.goals = [goal2]
-        graph_copy.goals_left = set([goal2])
-        last_node = find_path(graph_copy)
-        distance = last_node.path_cost
+        distance = shortest_distance(graph, goal1, goal2)
         distances_btw_goals.append((distance, goal1, goal2))
 
 full_graph = True   # now search shortest path for the whole problem
