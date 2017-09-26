@@ -9,7 +9,8 @@ def print_path(current_node):
         path_set.add(pos_on_path)
         pos_on_path = came_from[pos_on_path]
 
-    with open("bigMaze_bfs_soln.txt", "w") as fout:
+    with open("openMaze_bfs_soln.txt", "w") as fout:
+        fout.write("%d nodes expanded | %d steps taken\n"%(len(graph.visited), len(path_set)))
         for i in range(len(graph.matrix)):
             for j in range(len(graph.matrix[i])):
                 pos = (i, j)
@@ -47,7 +48,7 @@ def find_path(graph):
 
 
 
-graph = Graph("bigMaze.txt")
+graph = Graph("openMaze.txt")
 came_from = {}
 processing_queue = Queue()
 find_path(graph)
