@@ -1,0 +1,12 @@
+Solution: 36 steps taken | expanded 29763 nodes
+%%%%%%%%%%
+%7  % 4  %
+% %6% %% %
+% %   5%3%
+% 8%P%   %
+%9  0  1 %
+% %%%% % %
+%a b   %2%
+%%%%%%%%%%
+
+heuristic: sum(manhattan_distance(node, goal)**0.25)

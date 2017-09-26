@@ -21,15 +21,16 @@ class Node(object):
         self.goals_reached = []  # append in order
         self.path_cost = 0  # "Every time you add a node to the frontier, check whether it already exists in the
                             # frontier with a higher path cost, and if yes, replace that node with the new one"
+        self.f_score = 0
 
     def __lt__(self, other):
-        return self.coords < other.coords
+        return self.f_score < other.f_score
 
     def __str__(self):
         if self.parent is not None:
             return '%s -> %s' % (self.parent.coords, self.coords)
         else:
-            return "None -> (%s, %s)" % (self.row, self.col)
+            return "None -> %s" %str(self.coords)
 
     def __repr__(self):
         return self.__str__()
