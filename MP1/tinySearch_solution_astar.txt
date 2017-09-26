@@ -25,7 +25,7 @@ heuristic: min_distance
 
 
 
-Solution: 36 steps taken | expanded 1787 nodes
+Solution: 36 steps taken | expanded 307 nodes
 heuristic: total weights of MST
 %%%%%%%%%%
 %7  % 4  %

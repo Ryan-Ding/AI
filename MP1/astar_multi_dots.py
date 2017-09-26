@@ -1,3 +1,4 @@
+import copy
 import heapq
 
 from MP1.Graph import *
@@ -95,11 +96,15 @@ def num_of_goals_left(node):
 
 
 def heuristic_estimate(node):
-    return MST(node)
+    if full_graph:
+        return MST(node)
+    else:
+        return distance_to_closest_goal(node)
 
 
 def find_path(graph):
     explored_set = set()
+    node_count = 0
     frontier = []
     root = Node(graph.start_position)
     root.goals_left = set(graph.goals)
@@ -107,13 +112,14 @@ def find_path(graph):
     heapq.heappush(frontier, root)
     while len(frontier):
         current_node = heapq.heappop(frontier)
+        node_count += 1
         explored_set.add(current_node)
         if current_node.coords in current_node.goals_left:
             current_node.goals_left.remove(current_node.coords)
             print("reached a goal. %d nodes in frontier. goals left: "%len(frontier), current_node.goals_left)
             current_node.goals_reached.append(current_node.coords)
             if len(current_node.goals_left) == 0:
-                print("expanded %d nodes" % (len(explored_set) + len(frontier)))
+                print("expanded %d nodes" % node_count)
                 return current_node
 
         current_neighbors = graph.get_neighbors(current_node.coords)
@@ -141,16 +147,24 @@ def push_to_frontier(node_to_push, frontier):
     node_to_push.f_score = evaluate(node_to_push)
     heapq.heappush(frontier, node_to_push)
 
-graph = Graph(MULTI_DOT_MAZES[0])
+graph = Graph(MULTI_DOT_MAZES[1])
 
+full_graph = False  # search shortest path between goals (subproblems)
 # store the distances between each goals for MST use
 distances_btw_goals = []
 for i in range(len(graph.goals)):
     for j in range(i+1, len(graph.goals)):
         goal1 = graph.goals[i]
         goal2 = graph.goals[j]
-        distances_btw_goals.append((mahattan_distance(goal1, goal2), goal1, goal2))
+        graph_copy = copy.deepcopy(graph)
+        graph_copy.start_position = goal1
+        graph_copy.goals = [goal2]
+        graph_copy.goals_left = set([goal2])
+        last_node = find_path(graph_copy)
+        distance = last_node.path_cost
+        distances_btw_goals.append((distance, goal1, goal2))
 
+full_graph = True   # now search shortest path for the whole problem
 last_node = find_path(graph)
 if last_node is not None:
     graph.print_solution(last_node.get_path(), last_node.goals_reached)
