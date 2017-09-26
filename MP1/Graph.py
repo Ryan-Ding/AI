@@ -28,9 +28,9 @@ class Node(object):
 
     def __str__(self):
         if self.parent is not None:
-            return '%s -> %s' % (self.parent.coords, self.coords)
+            return '%s -> %s[%f]' % (self.parent.coords, self.coords, self.f_score)
         else:
-            return "None -> %s" %str(self.coords)
+            return "None -> %s[%f]" %(str(self.coords), self.f_score)
 
     def __repr__(self):
         return self.__str__()

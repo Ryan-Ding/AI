@@ -20,23 +20,26 @@ def distance_to_furthest_goal(node):    # tested not consistent
     return max_distance
 
 
-def distance_to_closest_goal(node):     # tested not consistent
-    max_distance = 0
+def distance_to_closest_goal(node):     # can find optimal, may be consistent (TODO: think proof)
+    min_distance = float("inf")
     for goal in node.goals_left:
-        max_distance = max(max_distance, mahattan_distance(node.coords, goal))
-    return max_distance
+        min_distance = min(min_distance, mahattan_distance(node.coords, goal))
+    return min_distance
 
-def distance_to_all_goals(node):        # can find optimal solution, may be consistent
+def distance_to_all_goals(node):        # can find optimal solution, but doesn't look consistent
     all_distance = 0
     for goal in node.goals_left:
-        all_distance += mahattan_distance(node.coords, goal) ** 0.25
+        all_distance += mahattan_distance(node.coords, goal) ** 0.5
     return all_distance
+
+def num_of_goals_left(node):
+    return len(node.goals_left)
 
 ################# heuristic candidates #################
 
 
 def heuristic_estimate(node):
-    return distance_to_all_goals(node)
+    return num_of_goals_left(node)
 
 
 def find_path(graph):
@@ -51,7 +54,7 @@ def find_path(graph):
         explored_set.add(current_node)
         if current_node.coords in current_node.goals_left:
             current_node.goals_left.remove(current_node.coords)
-            print("reached a goal. goals left: ", current_node.goals_left)
+            print("reached a goal. %d nodes in frontier. goals left: "%len(frontier), current_node.goals_left)
             current_node.goals_reached.append(current_node.coords)
             if len(current_node.goals_left) == 0:
                 print("expanded %d nodes" % (len(explored_set) + len(frontier)))
@@ -74,7 +77,7 @@ def push_to_frontier(node_to_push, frontier):
     for i in range(len(frontier)):
         node = frontier[i]
         if node == node_to_push:
-            if node.path_cost < node_to_push.path_cost:
+            if node.path_cost > node_to_push.path_cost:
                 frontier.pop(i)
                 break
             else:
@@ -82,7 +85,7 @@ def push_to_frontier(node_to_push, frontier):
     node_to_push.f_score = evaluate(node_to_push)
     heapq.heappush(frontier, node_to_push)
 
-graph = Graph("smallSearch.txt")
+graph = Graph(MULTI_DOT_MAZES[1])
 last_node = find_path(graph)
 if last_node is not None:
     graph.print_solution(last_node.get_path(), last_node.goals_reached)
