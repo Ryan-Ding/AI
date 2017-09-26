@@ -2,6 +2,45 @@ import heapq
 
 from MP1.Graph import *
 
+
+################## MST #########################
+parent = dict()
+rank = dict()
+
+
+def make_set(vertice):
+    parent[vertice] = vertice
+    rank[vertice] = 0
+
+def find(vertice):
+    if parent[vertice] != vertice:
+        parent[vertice] = find(parent[vertice])
+    return parent[vertice]
+
+
+def union(vertice1, vertice2):
+    root1 = find(vertice1)
+    root2 = find(vertice2)
+    if root1 != root2:
+        if rank[root1] > rank[root2]:
+            parent[root2] = root1
+        else:
+            parent[root1] = root2
+        if rank[root1] == rank[root2]: rank[root2] += 1
+
+def kruskal(nodes, edges):
+    for vertice in nodes:
+        make_set(vertice)
+    weights = 0
+    while len(edges)>0:
+        weight, vertice1, vertice2 = heapq.heappop(edges)
+        if find(vertice1) != find(vertice2):
+            union(vertice1, vertice2)
+            weights += weight
+
+    return weights
+################## MST #########################
+
 """
 f(n) = g(n) + h(n)
 f(n) -> evaluation function
@@ -32,6 +71,17 @@ def distance_to_all_goals(node):        # can find optimal solution, but doesn't
         all_distance += mahattan_distance(node.coords, goal) ** 0.5
     return all_distance
 
+def MST(node):
+    nodes_in_tree = set(node.goals_left)
+    nodes_in_tree.add(node.coords)
+    distances_btw_nodes = []
+    for goal in node.goals_left:
+        heapq.heappush(distances_btw_nodes, (mahattan_distance(node.coords, goal), node.coords, goal))
+    for distance, goal1, goal2 in distances_btw_goals:
+        if goal1 in node.goals_left and goal2 in node.goals_left:
+            heapq.heappush(distances_btw_nodes, (distance, goal1, goal2))
+    return kruskal(nodes_in_tree, distances_btw_nodes)
+
 def num_of_goals_left(node):
     return len(node.goals_left)
 
@@ -39,7 +89,7 @@ def num_of_goals_left(node):
 
 
 def heuristic_estimate(node):
-    return num_of_goals_left(node)
+    return MST(node)
 
 
 def find_path(graph):
@@ -85,7 +135,17 @@ def push_to_frontier(node_to_push, frontier):
     node_to_push.f_score = evaluate(node_to_push)
     heapq.heappush(frontier, node_to_push)
 
-graph = Graph(MULTI_DOT_MAZES[1])
+graph = Graph(MULTI_DOT_MAZES[0])
+
+# store the distances between each goals for MST use
+distances_btw_goals = []
+for i in range(len(graph.goals)):
+    for j in range(i+1, len(graph.goals)):
+        goal1 = graph.goals[i]
+        goal2 = graph.goals[j]
+        distances_btw_goals.append((mahattan_distance(goal1, goal2), goal1, goal2))
+
+
 last_node = find_path(graph)
 if last_node is not None:
     graph.print_solution(last_node.get_path(), last_node.goals_reached)
