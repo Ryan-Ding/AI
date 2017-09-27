@@ -17,3 +17,4 @@ real	0m59.332s
 user	0m59.160s
 sys	    0m0.072s
 
+9487 nodes | if precompute the distance between each position to each goal

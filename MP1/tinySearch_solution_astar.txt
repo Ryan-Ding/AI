@@ -42,7 +42,7 @@ user	0m0.112s
 sys	    0m0.012s
 
 Solution: 36 steps taken | expanded 196 nodes
-heuristic: total weights of MST + using actual distance between each goals + using actual distance between current position to each goal
+heuristic: total weights of MST + using actual distance between each goals + using actual distance between current position to each goal (computed in real time)
 %%%%%%%%%%
 %7  % 4  %
 % %6% %% %
@@ -52,3 +52,6 @@ heuristic: total weights of MST + using actual distance between each goals + usi
 % %%%% % %
 %a b   %2%
 %%%%%%%%%%
+real	0m1.177s
+user	0m1.168s
+sys	0m0.008s
