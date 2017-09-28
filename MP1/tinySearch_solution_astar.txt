@@ -79,7 +79,7 @@ sys	0m0.007s
 
 *****After precomputing the distance from goal to each node*****
 
-Solution: 36 steps taken | expanded 196 nodes
+Solution: 36 steps taken | expanded 143 nodes
 %%%%%%%%%%
 %7  % 4  %
 % %6% %% %
