@@ -95,11 +95,14 @@ def MST(node):  # TODO: think proof
     global parent
     global rank
     global graph
+    global shortest_distance_to_goal
     nodes_in_tree = set(node.goals_left)
     nodes_in_tree.add(node.coords)
     distances_btw_nodes = []
     for goal in node.goals_left:
-        heapq.heappush(distances_btw_nodes, (shortest_distance(graph, node.coords, goal), node.coords, goal))
+        if node.coords not in shortest_distance_to_goal[goal]:
+            shortest_distance_to_goal[goal][node.coords] = shortest_distance(graph, node.coords, goal)
+        heapq.heappush(distances_btw_nodes, (shortest_distance_to_goal[goal][node.coords], node.coords, goal))
     for distance, goal1, goal2 in distances_btw_goals:
         if goal1 in node.goals_left and goal2 in node.goals_left:
             heapq.heappush(distances_btw_nodes, (distance, goal1, goal2))
@@ -175,6 +178,10 @@ graph = Graph(MULTI_DOT_MAZES[1])
 full_graph = False  # search shortest path between goals (get solutions to subproblems)
 
 # store the distances between each goals for MST use
+shortest_distance_to_goal = {}
+for goal in graph.goals:
+    shortest_distance_to_goal[goal] = {}
+
 distances_btw_goals = []
 for i in range(len(graph.goals)):
     for j in range(i + 1, len(graph.goals)):
