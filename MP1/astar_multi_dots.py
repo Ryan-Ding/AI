@@ -47,11 +47,11 @@ def kruskal(nodes, edges):
 def shortest_distance(graph, point1, point2):
     global full_graph
     full_graph = False
-    graph_copy = copy.deepcopy(graph)
-    graph_copy.start_position = point1
-    graph_copy.goals = [point2]
-    graph_copy.goals_left = set([point2])
-    last_node = find_path(graph_copy)
+#    graph_copy = copy.deepcopy(graph)
+#    graph_copy.start_position = point1
+#    graph_copy.goals = [point2]
+#    graph_copy.goals_left = set([point2])
+    last_node = find_path(graph, point1, set([point2]))
     distance = last_node.path_cost
     full_graph = True
     return distance
@@ -125,12 +125,12 @@ def heuristic_estimate(node):
         return distance_to_closest_goal(node)
 
 
-def find_path(graph):
+def find_path(graph, start_position, goals):
     explored_set = set()
     node_count = 0
     frontier = []
-    root = Node(graph.start_position)
-    root.goals_left = set(graph.goals)
+    root = Node(start_position)
+    root.goals_left = set(goals)
     root.f_score = evaluate(root)
     heapq.heappush(frontier, root)
     while len(frontier):
@@ -191,7 +191,7 @@ for i in range(len(graph.goals)):
         distances_btw_goals.append((distance, goal1, goal2))
 
 full_graph = True  # now search shortest path for the whole problem
-last_node = find_path(graph)
+last_node = find_path(graph, graph.start_position, graph.goals)
 if last_node is not None:
     graph.print_solution(last_node.get_path(), last_node.goals_reached)
 else:
