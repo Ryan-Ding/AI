@@ -95,3 +95,24 @@ real	0m0.167s
 user	0m0.157s
 sys	0m0.006s
 ※Result based on EWS machine
+
+
+*****After avoiding calculating distances between goals twice *****
+
+Solution: 36 steps taken | expanded 143 nodes
+%%%%%%%%%%
+%7  % 4  %
+% %6% %% %
+% %   5%3%
+% 8%P%   %
+%9  0  1 %
+% %%%% % %
+%a b   %2%
+%%%%%%%%%%
+
+
+real	0m0.127s
+user	0m0.120s
+sys	0m0.004s
+
+※Result based on personal computer

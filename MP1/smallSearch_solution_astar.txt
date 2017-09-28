@@ -17,9 +17,6 @@ real	0m59.332s
 user	0m59.160s
 sys	    0m0.072s
 
-9487 nodes | if precompute the distance between each position to each goal
-
-
 *****After precomputing the distance from goal to each node*****
 
 Solution: 143 steps taken | expanded 9487 nodes
@@ -66,3 +63,27 @@ real	0m8.891s
 user	0m8.858s
 sys	0m0.021s
 ※Result based on EWS machine
+
+
+*****After avoiding calculating distances between goals twice *****
+
+Solution: 143 steps taken | expanded 7691 nodes
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%      P      0%      4  5   %
+%   %%%%% %%%%%% %  % % %%   %
+%   %b %     %   %  % %  %  6%
+%c     %     1   %3   %  %%%%%
+%%%%% %%%% %%%  %%%%%%%     7%
+%d               2    % %%%  %
+%% %%%%%%%% %%%%%%%%%%% %    %
+%       %               % %%%%
+%       %%%%%     %9         %
+%e% %%%    %  %   %% %% %%%%%%
+%          % a%             8%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+real	0m7.410s
+user	0m7.388s
+sys	0m0.020s
+※Result based on personal computer
