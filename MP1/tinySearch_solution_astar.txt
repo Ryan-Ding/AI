@@ -55,3 +55,23 @@ heuristic: total weights of MST + using actual distance between each goals + usi
 real	0m1.177s
 user	0m1.168s
 sys	0m0.008s
+
+
+*****After precomputing the distance from goal to each node*****
+
+Solution: 36 steps taken
+%%%%%%%%%%
+%7  % 4  %
+% %6% %% %
+% %   5%3%
+% 8%P%   %
+%9  0  1 %
+% %%%% % %
+%a b   %2%
+%%%%%%%%%%
+
+
+real	0m0.205s
+user	0m0.194s
+sys	0m0.007s
+※Result based on EWS machine

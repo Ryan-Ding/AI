@@ -173,7 +173,7 @@ def push_to_frontier(node_to_push, frontier):
     heapq.heappush(frontier, node_to_push)
 
 
-graph = Graph(MULTI_DOT_MAZES[1])
+graph = Graph(MULTI_DOT_MAZES[0])
 
 full_graph = False  # search shortest path between goals (get solutions to subproblems)
 
