@@ -24,7 +24,13 @@ class Node(object):
         self.f_score = 0
 
     def __lt__(self, other):
-        return self.f_score < other.f_score
+        if self.f_score < other.f_score:
+            return True
+        elif self.f_score > other.f_score:
+            return False
+        else:    # adding tie breaker when f_scores equal
+            return len(self.goals_left) < len(other.goals_left)
+
 
     def __str__(self):
         if self.parent is not None:
@@ -206,4 +212,3 @@ class Graph(object):
 
 def mahattan_distance(origin, destination):
     return abs(destination[0] - origin[0]) + abs(destination[1] - origin[1])
-
