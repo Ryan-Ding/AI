@@ -19,6 +19,7 @@ def heuristic_estimate(node):
     """
     if full_graph:
         return MST_score(node)
+#        return MST(node) * 10    inflate the heuristic to get a faster but suboptimal solution
     else:
         return distance_to_closest_goal(node)
 
