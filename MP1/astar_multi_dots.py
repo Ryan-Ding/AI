@@ -1,99 +1,48 @@
-import copy
 import heapq
 
 from Graph import *
+from kruskal import *
 
-################## MST [start] #########################
-# TODO: this part of code is copied from online, need to be refactored
-parent = dict()
-rank = dict()
-
-
-def make_set(vertice):
-    parent[vertice] = vertice
-    rank[vertice] = 0
-
-
-def find(vertice):
-    if parent[vertice] != vertice:
-        parent[vertice] = find(parent[vertice])
-    return parent[vertice]
-
-
-def union(vertice1, vertice2):
-    root1 = find(vertice1)
-    root2 = find(vertice2)
-    if root1 != root2:
-        if rank[root1] > rank[root2]:
-            parent[root2] = root1
-        else:
-            parent[root1] = root2
-        if rank[root1] == rank[root2]: rank[root2] += 1
-
-
-def kruskal(nodes, edges):
-    for vertice in nodes:
-        make_set(vertice)
-    weights = 0
-    while len(edges) > 0:
-        weight, vertice1, vertice2 = heapq.heappop(edges)
-        if find(vertice1) != find(vertice2):
-            union(vertice1, vertice2)
-            weights += weight
-
-    return weights
-
-
-def shortest_distance(graph, point1, point2):
-    global full_graph
-    full_graph = False
-#    graph_copy = copy.deepcopy(graph)
-#    graph_copy.start_position = point1
-#    graph_copy.goals = [point2]
-#    graph_copy.goals_left = set([point2])
-    last_node = find_path(graph, point1, set([point2]))
-    distance = last_node.path_cost
-    full_graph = True
-    return distance
-
-################## MST [end] #########################
-
-"""
-f(n) = g(n) + h(n)
-f(n) -> evaluation function
-g(n) -> path cost
-h(n) -> heuristic function
-"""
 
 def evaluate(node):
+    """
+    :return: f(n) = g(n) + h(n)
+    """
     return node.path_cost + heuristic_estimate(node)
 
 
+def heuristic_estimate(node):
+    """
+    When solving the whole maze, use the score calculated based on the MST;
+    when solving the partial maze, use manhattan distance to the closest goal.
+    :return: h(n)
+    """
+    if full_graph:
+        return MST_score(node)
+    else:
+        return distance_to_closest_goal(node)
+
+
 ################# heuristic candidates [start] #################
-def distance_to_furthest_goal(node):  # tested not consistent
-    max_distance = 0
-    for goal in node.goals_left:
-        max_distance = max(max_distance, mahattan_distance(node.coords, goal))
-    return max_distance
 
-
-def distance_to_closest_goal(node):  # can find optimal, may be consistent (TODO: think proof)
+def distance_to_closest_goal(node):
+    """
+    :param node: current position node
+    :return: the mahattan distance from current node to the closest goal
+    """
     min_distance = float("inf")
     for goal in node.goals_left:
         min_distance = min(min_distance, mahattan_distance(node.coords, goal))
     return min_distance
 
 
-def distance_to_all_goals(node):  # can find optimal solution, but doesn't look consistent
-    all_distance = 0
-    for goal in node.goals_left:
-        all_distance += mahattan_distance(node.coords, goal) ** 0.5
-    return all_distance
-
-
-def MST(node):  # TODO: think proof
-    global parent
-    global rank
+def MST_score(node):
+    """
+    Finds the minimum spanning tree that connects all the goals left and the current position, where the weight of each
+    edge is the actual shortest distance between two positions.
+    :param node: current position node
+    :return: a score calculated by summing the weights of all edges in the MST
+    """
     global graph
     global shortest_distance_to_goal
     nodes_in_tree = set(node.goals_left)
@@ -106,45 +55,52 @@ def MST(node):  # TODO: think proof
     for distance, goal1, goal2 in distances_btw_goals:
         if goal1 in node.goals_left and goal2 in node.goals_left:
             heapq.heappush(distances_btw_nodes, (distance, goal1, goal2))
-    weights = kruskal(nodes_in_tree, distances_btw_nodes)
-    parent = dict()
-    rank = dict()
+    weights = kruskal_weight_sum(nodes_in_tree, distances_btw_nodes)
     return weights
-
-
-def num_of_goals_left(node):
-    return len(node.goals_left)
 
 
 ################# heuristic candidates [end] #################
 
-def heuristic_estimate(node):
-    if full_graph:
-        return MST(node)
-    else:
-        return distance_to_closest_goal(node)
+def shortest_distance(graph, point1, point2):
+    """
+    Calculate the actual shortest distance from point1 to point2 in graph using A* search with the manhattan distance as
+    the heurisitc.
+    """
+    global full_graph
+    full_graph = False  # solve a subproblem in maze
+    last_node = find_path(graph, point1, set([point2]))
+    distance = last_node.path_cost
+    full_graph = True  # reset full_graph when switching back to solving the whole problem
+    return distance
 
 
 def find_path(graph, start_position, goals):
+    """
+    Find the shortest path for reaching all the goals from the start position in the graph.
+    :return: the last node expanded (last_node.path will be the optimal path)
+    """
     explored_set = set()
     node_count = 0
     frontier = []
+
+    # push root to frontier
     root = Node(start_position)
     root.goals_left = set(goals)
     root.f_score = evaluate(root)
     heapq.heappush(frontier, root)
+
+    # repeatedly expand frontier
     while len(frontier):
         current_node = heapq.heappop(frontier)
         node_count += 1
         explored_set.add(current_node)
-        if current_node.coords in current_node.goals_left:
+        if current_node.coords in current_node.goals_left:  # a goal is reached
             current_node.goals_left.remove(current_node.coords)
-            # print("reached a goal. %d nodes in frontier. goals left: "%len(frontier), current_node.goals_left)
             current_node.goals_reached.append(current_node.coords)
             if len(current_node.goals_left) == 0:
                 print("expanded %d nodes" % node_count)
                 return current_node
-
+        # add current node's neighbors to frontier
         current_neighbors = graph.get_neighbors(current_node.coords)
         for neighbor in current_neighbors:
             neighbor_node = Node(neighbor)
@@ -159,13 +115,16 @@ def find_path(graph, start_position, goals):
     print("No path found")
 
 
-# check if a node already exists in frontier before add it to frontier
 def push_to_frontier(node_to_push, frontier):
+    """
+    Check if a node already exists in frontier before add it to frontier
+    :param frontier: a heap of nodes
+    """
     for i in range(len(frontier)):
         node = frontier[i]
-        if node == node_to_push:
-            if node.path_cost > node_to_push.path_cost:
-                frontier.pop(i)
+        if node == node_to_push:  # if the state already exists in frontier
+            if node.path_cost > node_to_push.path_cost:  # if the state we want to push has a smaller path_cost
+                frontier.pop(i)  # remove the duplicated state with larger path_cost from frontier
                 break
             else:
                 return
@@ -174,10 +133,9 @@ def push_to_frontier(node_to_push, frontier):
 
 
 graph = Graph(MULTI_DOT_MAZES[0])
+full_graph = False  # a boolean for whether the search is for the whole maze of part of the maze (i.e. solving subproblem)
 
-full_graph = False  # search shortest path between goals (get solutions to subproblems)
-
-# store the distances between each goals for MST use
+# store the distances between each pair of positions for MST use
 shortest_distance_to_goal = {}
 for goal in graph.goals:
     shortest_distance_to_goal[goal] = {}
@@ -189,6 +147,8 @@ for i in range(len(graph.goals)):
         goal2 = graph.goals[j]
         distance = shortest_distance(graph, goal1, goal2)
         distances_btw_goals.append((distance, goal1, goal2))
+        shortest_distance_to_goal[goal1][goal2] = distance
+        shortest_distance_to_goal[goal2][goal1] = distance
 
 full_graph = True  # now search shortest path for the whole problem
 last_node = find_path(graph, graph.start_position, graph.goals)
