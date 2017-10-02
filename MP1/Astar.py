@@ -1,14 +1,17 @@
 from Graph import Graph
 
+MAZE_NAME = "bigMaze"
 def find_path():
+    node_count = 0
     while (len(frontier)):
         global current_pos
         current_pos = pos_lowest_f_score()
         if (current_pos == graph.goals[0]):
-            print_solution()
+            print_solution(node_count)
             return
 
         frontier.remove(current_pos)
+        node_count += 1
         graph.mark_visited(current_pos)
         current_neighbors = graph.get_neighbors(current_pos)
 
@@ -22,7 +25,7 @@ def find_path():
                 continue       # This is not a better path.
 
             # This path is the best until now. Record it!
-            graph.came_from[neighbor] = current_pos;
+            came_from[neighbor] = current_pos;
             g_score[neighbor] = tentative_g_score;
             f_score[neighbor] = g_score[neighbor] + heuristic_estimate(neighbor, graph.goals)
 
@@ -44,16 +47,16 @@ def heuristic_estimate(pos, goals):
     vertical = abs(pos[1] - goals[0][1])
     return horizontal + vertical       # using manhattan distance
 
-def print_solution():
+def print_solution(node_count):
     path_set = set()      # The set of all nodes on the solution path
     pos_on_path = current_pos      # Initially the goal position
 
-    while pos_on_path in graph.came_from:     # Go back from goal to start position to retrive the nodes on path
+    while pos_on_path in came_from:     # Go back from goal to start position to retrive the nodes on path
         path_set.add(pos_on_path)
-        pos_on_path = graph.came_from[pos_on_path]
+        pos_on_path = came_from[pos_on_path]
 
-    with open("openMaze_solution_astar.txt", "w") as fout:
-        fout.write("%d nodes expanded | %d steps taken\n"%(len(graph.visited), len(path_set)))
+    with open("%s_solution_astar.txt"%MAZE_NAME, "w") as fout:
+        fout.write("%d nodes expanded | %d steps taken\n"%(node_count, len(path_set)))
         for i in range(len(graph.matrix)):
             for j in range(len(graph.matrix[i])):
                 pos = (i, j)
@@ -67,8 +70,9 @@ def print_solution():
                     fout.write("%")
             fout.write("\n")
 
-graph = Graph("openMaze.txt")
+graph = Graph("%s.txt"%MAZE_NAME)
 current_pos = ()
+came_from = {}
 
 frontier = set()       # The set of currently discovered nodes that are not evaluated yet.
 

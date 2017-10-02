@@ -3,7 +3,7 @@ from collections import deque
 from Graph import Graph
 from queue import *
 
-MAZE_NAME = "bigMaze"
+MAZE_NAME = "openMaze"
 
 def print_path(current_node, count):
     path_set = set()  # The set of all nodes on the solution path

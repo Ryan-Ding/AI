@@ -1,4 +1,5 @@
 from Graph import Graph
+MAZE_NAME = "openMaze"
 
 def print_path(current_node, count):
     path_set = set()# The set of all nodes on the solution path
@@ -8,7 +9,7 @@ def print_path(current_node, count):
         path_set.add(pos_on_path)
         pos_on_path = came_from[pos_on_path]
 
-    with open("openMaze_dfs_soln.txt", "w") as fout:
+    with open("%s_dfs_soln.txt"%MAZE_NAME, "w") as fout:
         fout.write("%d nodes expanded | %d steps taken\n"%(count, len(path_set)))
         for i in range(len(graph.matrix)):
             for j in range(len(graph.matrix[i])):
@@ -49,7 +50,7 @@ def find_path(graph):
 
 
 
-graph = Graph("openMaze.txt") #start a graph class
+graph = Graph("%s.txt"%MAZE_NAME)
 came_from = {}  #initiate empty set
 stack = list()
 find_path(graph)    #find path
