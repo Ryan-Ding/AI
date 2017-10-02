@@ -210,5 +210,5 @@ class Graph(object):
             return chr(ord("A") + (goal_rank - 36))
 
 
-def mahattan_distance(origin, destination):
+def manhattan_distance(origin, destination):
     return abs(destination[0] - origin[0]) + abs(destination[1] - origin[1])

@@ -9,7 +9,7 @@ def print_path(current_node, count):
         pos_on_path = came_from[pos_on_path]
 
     with open("openMaze_dfs_soln.txt", "w") as fout:
-        fout.write("%d nodes expanded | %d steps taken\n"%(len(graph.visited), len(path_set)))
+        fout.write("%d nodes expanded | %d steps taken\n"%(count, len(path_set)))
         for i in range(len(graph.matrix)):
             for j in range(len(graph.matrix[i])):
                 pos = (i, j)
@@ -24,12 +24,13 @@ def print_path(current_node, count):
             fout.write("\n")
 
 def find_path(graph):
-    count=1
+    count=0
     start_pos = graph.start_position
     graph.mark_visited(start_pos) #mark starting node as visited
     stack.append(start_pos)    #add starting point to stack
     while stack:   #iterative dfs
        current_node = stack.pop()
+       count += 1
        if current_node in graph.goals:   #goal state found
          print_path(current_node,count)
          return
@@ -39,7 +40,6 @@ def find_path(graph):
           if not graph.has_visited(neighbor): #check if this node has been marked
               graph.mark_visited(neighbor)
               stack.append(neighbor)
-              count+=1
               came_from[neighbor]=current_node   #remember parent
          graph.mark_visited(current_node)
     return

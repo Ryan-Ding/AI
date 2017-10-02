@@ -1,4 +1,4 @@
-543 nodes expanded | 45 steps taken
+527 nodes expanded | 45 steps taken
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                     %P.....       %
 %                     %     .       %

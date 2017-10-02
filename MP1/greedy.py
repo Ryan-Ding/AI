@@ -5,16 +5,17 @@ import heapq
 
 
 def greedy(graph):
-    node_counts = 1
+    node_counts = 0
 
     def h(position):
-        return mahattan_distance(position, graph.goals[0])
+        return manhattan_distance(position, graph.goals[0])
 
     # add first node to frontier
     frontier = []
     heapq.heappush(frontier, (h(graph.start_position), Node(graph.start_position)))
     while len(frontier) > 0:
         distance, node = heapq.heappop(frontier)
+        node_counts += 1
         graph.mark_visited(node.coords)
         if node.coords in graph.goals_left:
             graph.reach_goal(node.coords)
@@ -28,7 +29,6 @@ def greedy(graph):
             neighbor_node = Node(neighbor)
             neighbor_node.parent = node
             heapq.heappush(frontier, (h(neighbor), neighbor_node))
-            node_counts += 1
 
 
 for maze in SINGLE_DOT_MAZES:
