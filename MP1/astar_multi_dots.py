@@ -18,8 +18,8 @@ def heuristic_estimate(node):
     :return: h(n)
     """
     if full_graph:
-        return MST_score(node)
-#        return MST(node) * 10    inflate the heuristic to get a faster but suboptimal solution
+        # return MST_score(node)
+       return MST_score(node) * 10    # inflate the heuristic to get a faster but suboptimal solution
     else:
         return distance_to_closest_goal(node)
 
@@ -29,11 +29,11 @@ def heuristic_estimate(node):
 def distance_to_closest_goal(node):
     """
     :param node: current position node
-    :return: the mahattan distance from current node to the closest goal
+    :return: the manhattan distance from current node to the closest goal
     """
     min_distance = float("inf")
     for goal in node.goals_left:
-        min_distance = min(min_distance, mahattan_distance(node.coords, goal))
+        min_distance = min(min_distance, manhattan_distance(node.coords, goal))
     return min_distance
 
 
@@ -133,7 +133,8 @@ def push_to_frontier(node_to_push, frontier):
     heapq.heappush(frontier, node_to_push)
 
 
-graph = Graph(MULTI_DOT_MAZES[0])
+# graph = Graph(MULTI_DOT_MAZES[0])
+graph = Graph("bigDots.txt")
 full_graph = False  # a boolean for whether the search is for the whole maze of part of the maze (i.e. solving subproblem)
 
 # store the distances between each pair of positions for MST use
