@@ -24,9 +24,10 @@ class CSP:
     def is_complete(self, assignments):
         return len(assignments) == len(self.variables)
 
-    def print_solution(self, assignments):
+    def solution_str(self, assignments):
         height = len(self.graph)
         width = len(self.graph[0])
+        s = ''
         for x in range(height):
             for y in range(width):
                 position = (x,y)
@@ -34,8 +35,9 @@ class CSP:
                     color = assignments[position]
                 else:
                     color = self.get_color(position)
-                print(color, end='')
-            print()
+                s += color
+            s += '\n'
+        return s
 
     def is_on_graph(self, position):
         x, y = position
