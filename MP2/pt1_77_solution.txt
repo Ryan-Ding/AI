@@ -1,0 +1,13 @@
+GGGOOOO
+GBGGGYO
+GBBBRYO
+GYYYRYO
+GYRRRYO
+GYRYYYO
+GYYYOOO
+
+3828 attempted assignment
+
+real	0m0.158s
+user	0m0.144s
+sys	0m0.012s

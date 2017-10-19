@@ -1,4 +1,4 @@
-from collections import Counter
+from collections import Counter, deque
 
 from pt1_csp import CSP
 
@@ -16,13 +16,13 @@ def can_assign(csp, var, val, assignments):
     global attempted_count
     attempted_count += 1
     assignments[var] = val
-    print("checking can_assign({},{})".format(var, val))
+    # print("checking can_assign({},{})".format(var, val))
 
     if not is_valid(csp, assignments, var):
         del assignments[var]
         return False
 
-    print("checking neighbors if assign({},{})".format(var, val))
+    # print("checking neighbors if assign({},{})".format(var, val))
     neighbors = csp.get_neighbors(var)
     for neighbor in neighbors:
         if not is_valid(csp, assignments, neighbor):
@@ -77,11 +77,13 @@ def select_unassigned_variable(csp, unassigned, assignments):
 
 def assign(var, val, assignments, csp):
     assignments[var] = val
-    print("assign: {} = {}".format(var, val))
+    # print("assign: {} = {}".format(var, val))
 
 
 def backtrack(assignments, unassigned, csp):
-    print("backtracking..... assigned {} vars, unassigned: {}".format(len(assignments), unassigned))
+    graph_str = csp.solution_str(assignments)
+    print(graph_str)
+    # print("backtracking..... assigned {} vars, unassigned: {}".format(len(assignments), unassigned))
     if csp.is_complete(assignments):
         return assignments
     var = select_unassigned_variable(csp, unassigned, assignments)
@@ -94,21 +96,22 @@ def backtrack(assignments, unassigned, csp):
             if result:  # found solution
                 return result
             else:
-                print("removing assignment for {}".format(var))
+                # print("removing assignment for {}".format(var))
                 del assignments[var]
-    unassigned.add(var)
+    unassigned.append(var)
     return False
 
 
-for i in range(7, 8):
-    game_name = 'pt1_{0}{0}'.format(i)
-    game_file_name = game_name + '.txt'
-    solution_file_name = game_name + '_solution.txt'
+i = 9
 
-    csp = CSP(game_file_name)
-    attempted_count = 0
-    unassigned = set(csp.variables)
-    final_assignments = backtrack({}, unassigned, csp)
-    solution = csp.solution_str(final_assignments)
-    print(solution)
-    print("{} attempted assignment".format(attempted_count))
+game_name = 'pt1_{0}{0}'.format(i)
+game_file_name = game_name + '.txt'
+solution_file_name = game_name + '_solution.txt'
+
+csp = CSP(game_file_name)
+attempted_count = 0
+unassigned = deque(sorted(csp.variables))
+final_assignments = backtrack({}, unassigned, csp)
+solution = csp.solution_str(final_assignments)
+print(solution)
+print("{} attempted assignment".format(attempted_count))

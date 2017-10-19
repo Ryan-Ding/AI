@@ -3,3 +3,16 @@ BRYYO
 BRYOO
 BROOG
 BBGGG
+
+
+BRRRO
+BRYYO
+BRYOO
+BROOG
+BBGGG
+
+51 attempted assignment
+
+real	0m0.095s
+user	0m0.068s
+sys	0m0.020s

@@ -31,7 +31,7 @@ class CSP:
         for x in range(height):
             for y in range(width):
                 position = (x,y)
-                if position in self.variables:
+                if position in assignments:
                     color = assignments[position]
                 else:
                     color = self.get_color(position)
