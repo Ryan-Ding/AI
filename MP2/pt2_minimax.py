@@ -31,10 +31,10 @@ def minimax_search(board, orig_is_black, is_black, is_max, turns):
                 continue
             board_copy = deepcopy(board)
             board_copy.move_piece(piece, direction, is_black)
-            value = minimax_search(board_copy, orig_is_black, not is_black, not is_max, turns - 1)[0]
+            value = abs(minimax_search(board_copy, orig_is_black, not is_black, not is_max, turns - 1)[0])
             if is_max:
-                heapq.heappush(values, (value, piece, direction))
-            else:
                 heapq.heappush(values, (-value, piece, direction))
+            else:
+                heapq.heappush(values, (value, piece, direction))
 
     return heapq.heappop(values)
